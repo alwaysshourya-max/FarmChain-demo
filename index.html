@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MangoChain: Blockchain Supply Chain for Farmers - RBVP Project</title>
+    <!-- QR Code Generation Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <!-- QR Code Scanner Library -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* Basic reset */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header */
+        .header {
+            background: linear-gradient(90deg, #27ae60 0%, #2ecc71 100%);
+            color: white;
+            padding: 25px 0;
+            text-align: center;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        
+        .header .highlight {
+            color: #f1c40f;
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Farm Section */
+        .farm-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+        
+        .farm-image {
+            width: 100%;
+            height: 300px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        .farm-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* Interactive Journey */
+        .journey-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .journey-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        .journey-step {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 5px solid #ddd;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .journey-step:hover {
+            transform: translateX(5px);
+            background: #e8f4fc;
+        }
+        
+        .journey-step.active {
+            border-left-color: #27ae60;
+            background: #e8f6f3;
+        }
+        
+        .journey-step.completed {
+            border-left-color: #2ecc71;
+            background: #e8f6f3;
+        }
+        
+        .step-icon {
+            font-size: 2rem;
+            color: #7f8c8d;
+        }
+        
+        .journey-step.active .step-icon {
+            color: #27ae60;
+        }
+        
+        .journey-step.completed .step-icon {
+            color: #2ecc71;
+        }
+        
+        .step-content {
+            text-align: left;
+            flex: 1;
+        }
+        
+        .step-content h4 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        /* Control Panel */
+        .control-panel {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+        
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(41, 128, 185, 0.3);
+        }
+        
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #219653;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(39, 174, 96, 0.3);
+        }
+        
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background: #d68910;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(243, 156, 18, 0.3);
+        }
+        
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+        }
+        
+        /* QR Section */
+        .qr-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .qr-container {
+            margin: 20px auto;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            max-width: 300px;
+        }
+        
+        #qr-code-display {
+            width: 250px;
+            height: 250px;
+            margin: 0 auto;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Scanner Section */
+        .scanner-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+        
+        #reader {
+            width: 100%;
+            max-width: 500px;
+            margin: 20px auto;
+        }
+        
+        /* Blockchain Ledger */
+        .ledger-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+        
+        .ledger-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-family: 'Roboto Mono', monospace;
+        }
+        
+        .ledger-table th {
+            background: #2c3e50;
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+        
+        .ledger-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .ledger-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        /* Results Display */
+        .results-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+        
+        #verification-result {
+            min-height: 100px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+        
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        .notification-success { background: #27ae60; }
+        .notification-warning { background: #f39c12; }
+        .notification-info { background: #3498db; }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        /* Judge Panel */
+        .judge-panel {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .judge-instructions {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        /* Animation for QR code */
+        @keyframes qrPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .qr-pulse {
+            animation: qrPulse 0.5s ease-in-out;
+        }
+        
+        /* QR Code Actions */
+        .qr-actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        /* Status Indicators */
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-active { background: #27ae60; }
+        .status-pending { background: #f39c12; }
+        .status-completed { background: #2ecc71; }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <h1>🥭 Mango<span class="highlight">Chain</span></h1>
+            <p class="tagline">Real Blockchain Food Transparency System | RBVP Project</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Judge Instructions -->
+        <div class="judge-panel">
+            <h2><i class="fas fa-user-tie"></i> Judge's Interactive Demo</h2>
+            <div class="judge-instructions">
+                <p><strong>Instructions:</strong> Experience real QR code scanning and blockchain tracking:</p>
+                <ol style="text-align: left; margin: 15px 0; padding-left: 20px;">
+                    <li><strong>Click journey steps</strong> to simulate the supply chain</li>
+                    <li><strong>Scan the REAL QR code</strong> with the live camera scanner</li>
+                    <li><strong>Generate new QR codes</strong> and scan them to verify</li>
+                    <li><strong>Watch blockchain update</strong> in real-time</li>
+                </ol>
+                <p><i class="fas fa-lightbulb"></i> <strong>Tip:</strong> Use your phone's camera to scan the QR code!</p>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- Left Column: Farm & Journey -->
+            <div>
+                <!-- Farm Section -->
+                <div class="farm-section">
+                    <h2><i class="fas fa-tractor"></i> Farm Information</h2>
+                    <div class="farm-image">
+                        <img src="https://images.unsplash.com/photo-1652267083526-77e87294aa82?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Mango Farm">
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
+                        <div>
+                            <p><strong><i class="fas fa-map-marker-alt"></i> Farm:</strong> Green Valley Farm</p>
+                            <p><strong><i class="fas fa-user"></i> Farmer:</strong> Rajesh Kumar</p>
+                            <p><strong><i class="fas fa-seedling"></i> Variety:</strong> Alphonso</p>
+                        </div>
+                        <div>
+                            <p><strong><i class="fas fa-certificate"></i> Certified:</strong> Organic</p>
+                            <p><strong><i class="fas fa-calendar"></i> Established:</strong> 1995</p>
+                            <p><strong><i class="fas fa-expand-arrows-alt"></i> Size:</strong> 25 acres</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Journey -->
+                <div class="journey-section">
+                    <h2><i class="fas fa-truck-moving"></i> Interactive Supply Chain Journey</h2>
+                    <p>Click each step to simulate the mango's journey from farm to consumer:</p>
+                    
+                    <div class="journey-steps">
+                        <div class="journey-step" id="step1" onclick="activateStep(1)">
+                            <div class="step-icon"><i class="fas fa-tree"></i></div>
+                            <div class="step-content">
+                                <h4>Step 1: Farm Harvest</h4>
+                                <p id="step1-status"><span class="status-indicator status-pending"></span>Click to harvest mangoes</p>
+                            </div>
+                        </div>
+                        
+                        <div class="journey-step" id="step2" onclick="activateStep(2)">
+                            <div class="step-icon"><i class="fas fa-industry"></i></div>
+                            <div class="step-content">
+                                <h4>Step 2: Processing & Packing</h4>
+                                <p id="step2-status"><span class="status-indicator status-pending"></span>Click to wash and pack</p>
+                            </div>
+                        </div>
+                        
+                        <div class="journey-step" id="step3" onclick="activateStep(3)">
+                            <div class="step-icon"><i class="fas fa-truck"></i></div>
+                            <div class="step-content">
+                                <h4>Step 3: Transportation</h4>
+                                <p id="step3-status"><span class="status-indicator status-pending"></span>Click to ship to market</p>
+                            </div>
+                        </div>
+                        
+                        <div class="journey-step" id="step4" onclick="activateStep(4)">
+                            <div class="step-icon"><i class="fas fa-store"></i></div>
+                            <div class="step-content">
+                                <h4>Step 4: Supermarket Display</h4>
+                                <p id="step4-status"><span class="status-indicator status-pending"></span>Click to place on shelf</p>
+                            </div>
+                        </div>
+                        
+                        <div class="journey-step" id="step5" onclick="activateStep(5)">
+                            <div class="step-icon"><i class="fas fa-shopping-cart"></i></div>
+                            <div class="step-content">
+                                <h4>Step 5: Consumer Purchase</h4>
+                                <p id="step5-status"><span class="status-indicator status-pending"></span>Click to purchase product</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <button class="btn btn-warning" onclick="simulateFullJourney()">
+                            <i class="fas fa-play"></i> Auto-Run Complete Demo
+                        </button>
+                        <button class="btn btn-danger" onclick="resetJourney()">
+                            <i class="fas fa-redo"></i> Reset Journey
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Control Panel & QR -->
+            <div>
+                <!-- Control Panel -->
+                <div class="control-panel">
+                    <h2><i class="fas fa-gamepad"></i> Control Panel</h2>
+                    <div style="margin: 20px 0; text-align: center;">
+                        <button class="btn btn-success" onclick="harvestBatch()">
+                            <i class="fas fa-apple-alt"></i> Quick Harvest Batch
+                        </button>
+                        <button class="btn btn-primary" onclick="generateNewBatch()">
+                            <i class="fas fa-plus-circle"></i> Generate New Batch
+                        </button>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 20px;">
+                        <h4><i class="fas fa-barcode"></i> Current Batch: <span id="current-batch" style="color: #27ae60; font-family: 'Roboto Mono';">MANGO2024-001</span></h4>
+                        <p><i class="fas fa-cube"></i> Blockchain Blocks: <span id="block-count">1</span></p>
+                        <p><i class="fas fa-map-marker"></i> Current Stage: <span id="current-stage">Ready for harvest</span></p>
+                    </div>
+                </div>
+
+                <!-- QR Code Display -->
+                <div class="qr-section">
+                    <h2><i class="fas fa-qrcode"></i> REAL QR Code (Scannable)</h2>
+                    <div class="qr-container">
+                        <div id="qr-code-display">
+                            <!-- REAL QR code will be generated here -->
+                        </div>
+                        <p style="margin-top: 15px; font-family: 'Roboto Mono'; font-weight: bold;">
+                            <i class="fas fa-barcode"></i> Batch: <span id="batch-id">MANGO2024-001</span>
+                        </p>
+                        
+                        <div class="qr-actions">
+                            <button class="btn btn-primary" onclick="downloadQRCode()">
+                                <i class="fas fa-download"></i> Download
+                            </button>
+                            <button class="btn btn-success" onclick="printQRCode()">
+                                <i class="fas fa-print"></i> Print
+                            </button>
+                            <button class="btn btn-warning" onclick="shareQRCode()">
+                                <i class="fas fa-share"></i> Share
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px; background: #e8f4fc; padding: 15px; border-radius: 8px;">
+                        <p><i class="fas fa-info-circle"></i> <strong>Scan this QR code with:</strong></p>
+                        <p>• Phone camera • QR scanner app • Webcam scanner below</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- QR Code Scanner -->
+        <div class="scanner-section">
+            <h2><i class="fas fa-camera"></i> Live QR Code Scanner</h2>
+            <p>Scan the QR code above using your webcam or phone camera:</p>
+            
+            <div id="reader"></div>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn btn-success" onclick="startScanner()" id="start-scanner">
+                    <i class="fas fa-play"></i> Start Camera Scanner
+                </button>
+                <button class="btn btn-danger" onclick="stopScanner()" id="stop-scanner" style="display: none;">
+                    <i class="fas fa-stop"></i> Stop Scanner
+                </button>
+                <button class="btn btn-warning" onclick="testWithPhone()">
+                    <i class="fas fa-mobile-alt"></i> Test with Phone
+                </button>
+            </div>
+            
+            <div id="scan-result" style="margin-top: 20px;"></div>
+        </div>
+
+        <!-- Blockchain Ledger -->
+        <div class="ledger-section">
+            <h2><i class="fas fa-link"></i> Live Blockchain Ledger</h2>
+            <p>Each action creates an immutable record on the blockchain:</p>
+            
+            <table class="ledger-table">
+                <thead>
+                    <tr>
+                        <th>Block #</th>
+                        <th>Timestamp</th>
+                        <th>From → To</th>
+                        <th>Action</th>
+                        <th>Hash</th>
+                    </tr>
+                </thead>
+                <tbody id="ledger-body">
+                    <!-- Blocks will be added here -->
+                </tbody>
+            </table>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn btn-primary" onclick="addTestTransaction()">
+                    <i class="fas fa-plus"></i> Add Test Transaction
+                </button>
+                <button class="btn btn-warning" onclick="viewBlockchainExplorer()">
+                    <i class="fas fa-search"></i> View Blockchain Explorer
+                </button>
+            </div>
+        </div>
+
+        <!-- Verification Results -->
+        <div class="results-section">
+            <h2><i class="fas fa-check-circle"></i> Verification Results</h2>
+            <div id="verification-result">
+                <div style="text-align: center; color: #7f8c8d; padding: 30px;">
+                    <i class="fas fa-qrcode" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                    <p>Scan a QR code to see verification results here</p>
+                    <p><small>Try scanning the QR code above with the camera scanner</small></p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Phone Testing Instructions -->
+        <div style="background: #fff3cd; padding: 25px; border-radius: 15px; margin-top: 30px; border-left: 5px solid #ffc107;">
+            <h3><i class="fas fa-mobile-alt"></i> For RBVP Judges: Phone Testing</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;">
+                <div>
+                    <h4><i class="fas fa-camera"></i> Method 1: Phone Camera</h4>
+                    <p>1. Open your phone's camera app</p>
+                    <p>2. Point at the QR code on screen</p>
+                    <p>3. Tap the notification to see data</p>
+                </div>
+                <div>
+                    <h4><i class="fas fa-qrcode"></i> Method 2: QR Scanner App</h4>
+                    <p>1. Install any QR scanner app</p>
+                    <p>2. Scan the QR code</p>
+                    <p>3. See the blockchain data</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer style="text-align: center; padding: 30px 0; color: #7f8c8d; margin-top: 50px; border-top: 1px solid #e0e0e0;">
+        <div class="container">
+            <h3 style="color: #2c3e50; margin-bottom: 15px;">MangoChain - RBVP Project</h3>
+            <p>Demonstrating real blockchain technology for food supply chain transparency</p>
+            <p style="margin-top: 20px; font-size: 0.9rem;">
+                <i class="fas fa-lightbulb"></i> This system uses real QR codes and blockchain simulation
+            </p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
