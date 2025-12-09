@@ -166,7 +166,7 @@ function createBackupQRDisplay() {
                 ${currentBatch}
             </div>
             <div style="color: #7f8c8d; margin-top: 5px; font-size: 0.9rem;">
-                MANGOCHAIN VERIFICATION
+                FARMCHAIN VERIFICATION
             </div>
             <div style="margin-top: 15px; color: #27ae60; font-size: 0.8rem;">
                 <i class="fas fa-check-circle"></i> Scannable QR Code
@@ -556,7 +556,7 @@ function processQRScan(qrData) {
         scanResult.innerHTML = `
             <div style="background: #d4edda; padding: 15px; border-radius: 8px; text-align: center;">
                 <p><i class="fas fa-check-circle"></i> Scan successful!</p>
-                <p>QR code verified as genuine MangoChain product</p>
+                <p>QR code verified as genuine FarmChain product</p>
                 <p style="margin-top: 10px; font-size: 0.9rem;">
                     Batch: <strong>${batchId}</strong>
                 </p>
@@ -921,5 +921,6 @@ window.addEventListener('beforeunload', () => {
         html5QrCode.stop();
     }
 });
+
 
 console.log("🎯 MangoChain RBVP Demo Ready with WORKING QR Codes!");
